@@ -21,8 +21,7 @@ RUN npm run build
 FROM nginxinc/nginx-unprivileged:stable-alpine
 USER root
 RUN adduser -D --uid 2000 nonroot
-RUN apk update && apk upgrade --available && sync && \
-    apk add --no-cache bash exiftool wget tzdata
+RUN apk update && apk upgrade --available && sync
 
 # Copy built assets from the build stage
 COPY --from=build /app/dist /usr/share/nginx/html
