@@ -265,7 +265,7 @@ function addRow(network, netSize, colspan, note, notesWidth, color, operatingMod
     let usableLast = subnet_usable_last(addressFirst, netSize)
     let hostCount = 1 + usableLast - usableFirst
     let styleTag = ''
-    if (color !== '') {
+    if (color !== '' && /^#[0-9a-fA-F]{6}$/.test(color)) {
         styleTag = ' style="background-color: ' + color + '"'
     }
 
@@ -285,7 +285,7 @@ function addRow(network, netSize, colspan, note, notesWidth, color, operatingMod
         '                <td data-subnet="' + rowCIDR + '" aria-labelledby="' + rowId + ' rangeHeader" class="row_range">' + rangeCol + '</td>\n' +
         '                <td data-subnet="' + rowCIDR + '" aria-labelledby="' + rowId + ' useableHeader" class="row_usable">' + usableCol + '</td>\n' +
         '                <td data-subnet="' + rowCIDR + '" aria-labelledby="' + rowId + ' hostsHeader" class="row_hosts">' + hostCount + '</td>\n' +
-        '                <td class="note" style="width:' + notesWidth + '"><label><input aria-labelledby="' + rowId + ' noteHeader" type="text" class="form-control shadow-none p-0" data-subnet="' + rowCIDR + '" value="' + note + '"></label></td>\n' +
+        '                <td class="note" style="width:' + notesWidth + '"><label><input aria-labelledby="' + rowId + ' noteHeader" type="text" class="form-control shadow-none p-0" data-subnet="' + rowCIDR + '" value="' + escapeHtml(note) + '"></label></td>\n' +
         '                <td data-subnet="' + rowCIDR + '" aria-labelledby="' + rowId + ' splitHeader" rowspan="1" colspan="' + colspan + '" class="split rotate" data-mutate-verb="split"><span>/' + netSize + '</span></td>\n'
     if (netSize > maxNetSize) {
         // This is wrong. Need to figure out a way to get the number of children so you can set rowspan and the number
@@ -974,3 +974,11 @@ function sortIPCIDRs(obj) {
 }
 
 const rgba2hex = (rgba) => `#${rgba.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+\.{0,1}\d*))?\)$/).slice(1).map((n, i) => (i === 3 ? Math.round(parseFloat(n) * 255) : parseFloat(n)).toString(16).padStart(2, '0').replace('NaN', '')).join('')}`
+
+function escapeHtml(str) {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+}
