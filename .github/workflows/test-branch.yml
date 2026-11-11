@@ -1,16 +1,17 @@
-name: Deploy Branch
+name: Test Branch
 
 on:
+  workflow_call:
   push:
     branches:
-      - main
-
-permissions:
-      id-token: write
-      contents: read
+      - 'feature/*'
+  pull_request:
+    branches:
+      - '**'
 
 jobs:
-  deploy:
+  test:
+    name: Run Playwright
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
@@ -30,6 +31,9 @@ jobs:
       working-directory: ./src
     - run: npm run build --if-present
       working-directory: ./src
+    - name: Replace Deployment URL
+      run: |
+        sed -i "s|__DEPLOY_URL__|${{ vars.DEPLOY_URL }}|g" dist/index.html
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
       working-directory: ./src
@@ -42,13 +46,3 @@ jobs:
         name: playwright-report
         path: ./src/playwright-report
         retention-days: 30
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        aws-region: ${{ vars.AWS_DEPLOY_REGION }}
-        role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
-    - name: AWS Deploy
-      run: |
-        aws sts get-caller-identity
-        aws s3 sync ./dist s3://${{ vars.AWS_DEPLOY_S3_BUCKET_NAME }} --delete
-        aws cloudfront create-invalidation --distribution-id ${{ vars.AWS_DEPLOY_CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"

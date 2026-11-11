@@ -1,4 +1,5 @@
-FROM node:20-alpine AS build
+# Node 24 (LTS) since 2026-11-11: node:20 went EOL 2026-04-30.
+FROM node:24-alpine AS build
 
 ARG REACT_APP_SERVICES_HOST=/services/m
 
@@ -26,5 +27,5 @@ RUN apk update && apk upgrade --available && sync
 # Copy built assets from the build stage
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Set a non-root user
+# Set a non-root user (the k8s Deployment runs it as 10000 anyway)
 USER 2000
