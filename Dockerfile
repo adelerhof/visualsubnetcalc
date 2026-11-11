@@ -1,5 +1,5 @@
-# Node 24 (LTS) since 2026-11-11: node:20 went EOL 2026-04-30.
-FROM node:24-alpine AS build
+# Node 26 (LTS since 2026-10) -- chosen 2026-05-26 (cf5fa91); node:20 went EOL 2026-04-30.
+FROM node:26-alpine AS build
 
 ARG REACT_APP_SERVICES_HOST=/services/m
 
