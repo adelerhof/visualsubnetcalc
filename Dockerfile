@@ -18,8 +18,8 @@ RUN npm run build
 
 
 # Use a specific version of nginx
-# https://hub.docker.com/r/nginxinc/nginx-unprivileged
-FROM nginxinc/nginx-unprivileged:stable-alpine
+# https://hub.docker.com/r/nginx/nginx-unprivileged (moved from nginxinc/ in 2026-10)
+FROM nginx/nginx-unprivileged:stable-alpine
 USER root
 RUN adduser -D --uid 2000 nonroot
 RUN apk update && apk upgrade --available && sync
